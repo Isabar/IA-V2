@@ -1,4 +1,3 @@
-
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -27,10 +26,10 @@ public class Population  implements Comparator<List50Polygons> {
 
 	public Population() {
 		super();
-		l = new ArrayList<List50Polygons>(effectif);
+		l = new ArrayList<List50Polygons>();
 		nbgeneration = 0;
 		for (int i = 0; i < effectif; i++) {
-			l.add(new List50Polygons(numPoint));
+			l.add(new List50Polygons(numPoint, nbgeneration));
 		}
 		best = new List50Polygons(numPoint);
 		best.setScore();
@@ -78,7 +77,7 @@ public class Population  implements Comparator<List50Polygons> {
 		return popSelectionnee;
 	}
 	
-	public ArrayList<List50Polygons> selectionElististe(ArrayList<List50Polygons> l, int nbIndividus) {
+/*	public ArrayList<List50Polygons> selection(ArrayList<List50Polygons> l, int nbIndividus) {
 		ArrayList<List50Polygons> l2= new ArrayList<List50Polygons>();
 		// System.out.println(k);
 		for (int i = 0; i < nbIndividus; i++) {
@@ -88,7 +87,7 @@ public class Population  implements Comparator<List50Polygons> {
 		}
 		// System.out.println( "taille après selec"+l.size());
 		return l2;
-	}
+	}*/
 
 
 	// retourne la liste des enfants créés par le crossover de même taille qu ela
@@ -97,7 +96,7 @@ public class Population  implements Comparator<List50Polygons> {
 	public ArrayList<List50Polygons> crossover(ArrayList<List50Polygons> l) {
 		int nbCouples = effectif / 2;
 		// System.out.println(" nb couples : " + nbCouples);
-		ArrayList<List50Polygons> progeniture = new ArrayList<List50Polygons>(effectif);
+		ArrayList<List50Polygons> progeniture = new ArrayList<List50Polygons>();
 		int crossoverPoint = -1;
 		for (int i = 0; i < nbCouples; i++) {
 			int indiceparent1 = (int) (Math.random() * (l.size() - 1));// on choisit les coiuples de parents de façon
@@ -113,14 +112,11 @@ public class Population  implements Comparator<List50Polygons> {
 			List50Polygons parent1 = l.get(indiceparent1);
 			List50Polygons parent2 = l.get(indiceparent2);
 			// System.out.println("test1");
-			List50Polygons enfant1 = new List50Polygons();
-			List50Polygons enfant2 = new List50Polygons();
+			List50Polygons enfant1 = new List50Polygons(nbgeneration);
+			List50Polygons enfant2 = new List50Polygons(nbgeneration);
 			// System.out.println("test2");
-			
-			// crée un nv polygon par copie pr insérer dans la liste 
 			for (int j = 0; j < crossoverPoint; j++) { // avant le point de crossover on effectue une copie
 				enfant1.list.add(parent1.list.get(j));
-				//System.out.println( " nb coté poly enfant"+enfant1.list.getPoint())
 				enfant2.list.add(parent2.list.get(j));
 
 			}
@@ -133,10 +129,6 @@ public class Population  implements Comparator<List50Polygons> {
 
 			enfant1.setScore();
 			enfant2.setScore();
-			/*for ( int test = 0; test< enfant1.list.size(); test++) {
-				
-			}*/
-			//System.out.println( " taille enfant "+ enfant1.list.size());
 			progeniture.add(enfant1);
 			progeniture.add(enfant2);
 		}
@@ -206,22 +198,19 @@ public class Population  implements Comparator<List50Polygons> {
 
 	public ArrayList<List50Polygons> mutation(ArrayList<List50Polygons> l) {
 		for (int i = 0; i < l.size(); i++) {
-			//System.out.println( " size l"+l.size() );
 			double proba = Math.random();
-			
 			if (proba < Main.probaMutation) {
 				int mutationPoint = (int) (Math.random() * Main.nbPolygons);
 				//ConvexPolygon CP = new ConvexPolygon(numPoint);
-				//System.out.println( " mutation point "+ mutationPoint);
 				ConvexPolygon CP= l.get(i).list.get(mutationPoint);
-				assert CP.getPoints().size()>=3;
-				//System.out.println(" cp taille points "+CP.getPoints().size());
+				//System.out.println(CP);
 				//System.out.println("avant mut "+l.get(i).score );
 				CP= CP.TypeMutation();
 				//System.out.println(CP);
-				
+				System.out.println("score av mut" +l.get(i).score);
 				l.get(i).list.set(mutationPoint, CP);
 				l.get(i).setScore();
+				System.out.println("score ap mut" +l.get(i).score);
 				//System.out.println("apres mut "+l.get(i).score);
 			}
 		}

@@ -1,4 +1,3 @@
-import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -15,9 +14,9 @@ import javafx.scene.transform.Translate;
 
 public class ConvexPolygon extends Polygon {
 
-	//static final int maxNumPoints = 3;
+	static final int maxNumPoints = 3;
 	static Random gen = new Random();
-	static int max_X, max_Y;
+	static int max_X=100, max_Y=149;
 	NumberFormat nf = new DecimalFormat("##.00");
 
 	// randomly generates a polygon
@@ -34,16 +33,6 @@ public class ConvexPolygon extends Polygon {
 	public ConvexPolygon() {
 		super();
 	}
-
-	/*public ConvexPolygon(ConvexPolygon cp) {
-		this.nf = cp.nf;
-		for(int i = 0; i < cp.getPoints().size()-1; i+=2){
-			this.addPoint(cp.getPoints().get(i), cp.getPoints().get(i+1));
-}
-		Color c = (Color) cp.getFill();
-		this.setFill(Color.rgb((int) (c.getRed() * 255), (int) (c.getGreen() * 255), (int) (c.getBlue() * 255)));
-		this.setOpacity(cp.getOpacity());
-	}*/
 
 	public String toString() {
 		String res = super.toString();
@@ -191,69 +180,59 @@ public class ConvexPolygon extends Polygon {
 	}
 
 	public ConvexPolygon TranslationMutation() {
-		System.out.println("translation");
+
 		ConvexPolygon P = new ConvexPolygon();
 		Random random = new Random();
-		int vx = random.nextInt(max_X);
-		int vy = random.nextInt(max_Y);
-		Translate translate = new Translate(vx, vy);
+		int vx=random.nextInt(max_X);
+		int vy=random.nextInt(max_Y);
+		Translate translate= new Translate( vx,vy);
 		this.getTransforms().add(translate);
 		return P;
 	}
-// probleme ici 
-	/*public ConvexPolygon RotationMutation() {
-		System.out.println("rotation");
-		Random random = new Random();
-		List<Double> point = this.getPoints();
-		if (point.size() != 0) {
 
-			Rotate rotate = new Rotate(1 + random.nextInt(360), point.get(0), point.get(1));
-			this.getTransforms().addAll(rotate);
-		}
-
-		// a continuer
-		return this;
-	}*/
-
-	public ConvexPolygon PointMutation() {
-		// ObservableList<Double> l =this.getPoints();
-		//System.out.println("point mutation ");
-		//assert this.getPoints().size()>=3;
-		Random random = new Random();
-		//System.out.println(this.getPoints().size());
+	public ConvexPolygon RotationMutation() {
 		
-		int i = random.nextInt(this.getPoints().size() - 1);
-		if (i<0) {
-			i=0;
-		}
-		if (i % 2 == 0) {
-			this.getPoints().remove(i);
-			this.getPoints().remove(i);
-		}
-		if (i % 2 == 1) {
-			this.getPoints().remove(i);
-			this.getPoints().remove(i - 1);
-		}
-
-		// this.getPoints().setAll(l);
-		// ModifList(l,this);// fonction remet la liste modifiée dans le polygon
-
-		int x = random.nextInt(ConvexPolygon.max_X);
-		int y = random.nextInt(ConvexPolygon.max_Y);
-		this.addPoint(x, y);
-		//System.out.println(this.getPoints().size());
+		Random r = new Random();
+		
+		//List<Double> point = this.getPoints();
+		//System.out.println(point);
+		
+	    this.setRotate(r.nextDouble());
+		//Rotate rotate= new Rotate( 1+random.nextInt(360), point.get(0), point.get(1));
+		//System.out.println(this);
+		//this.getTransforms().addAll(rotate);
+		//System.out.println(this);
+		//this.setRotate(r.nextDouble());
+	    //System.out.println(this.getPoints());
 		return this;
 	}
-	/*
-	 * public void ModifList(List<Double> l, ConvexPolygon P){
-	 * //System.out.println("avant modif" +P.getPoints()); P.getPoints().setAll(l);
-	 * //System.out.println("liste"+l); //System.out.println("apres modif"
-	 * +P.getPoints()); }
-	 */
 
+	public ConvexPolygon PointMutation() {
+		//ObservableList<Double> l =this.getPoints();
+
+		Random random = new Random();
+		
+		int i = random.nextInt(this.getPoints().size());
+			
+		if ( i%2 ==0) {
+			this.getPoints().remove(i);
+			this.getPoints().remove(i);
+		}
+		if ( i%2 ==1) {
+			this.getPoints().remove(i);
+			this.getPoints().remove(i-1);
+		}
+		
+		int x = 1+random.nextInt(ConvexPolygon.max_X);// si jamais on tire 0 
+		int y = 1+random.nextInt(ConvexPolygon.max_Y);
+		this.addPoint(x, y);
+		return this;
+	}
+  
+	
 	public ConvexPolygon CouleurMutation() {
 		ConvexPolygon P = this;
-		//System.out.println("couleur mutation");
+
 		Random x = new Random();
 		int r = x.nextInt(256);
 		int g = x.nextInt(256);
@@ -263,35 +242,45 @@ public class ConvexPolygon extends Polygon {
 	}
 
 	public ConvexPolygon OpaciteMutation() {
-	//	System.out.println("opacite mutation");
 		ConvexPolygon P = this;
 		Random r = new Random();
 		this.setOpacity(r.nextDouble());
 		return P;
 	}
-
+	
 	public ConvexPolygon TypeMutation() {
-//		assert this.getPoints().size()>=3;
-		Random r = new Random();
-		int i = r.nextInt(4);
-//		System.out.println( " i muatation "+i);
-		ConvexPolygon p;
-		if (i == 0) {
-			p = this.PointMutation();
-		} else if (i == 1) {
-			p = this.CouleurMutation();
-		} else if (i == 2) {
-			p = this.OpaciteMutation();
-		} /*else if (i == 3) {
-			p = this.RotationMutation();
-		} else if (i == 4) {
-			p = this.TranslationMutation();
-		}*/ else {
-			p = new ConvexPolygon(Population.numPoint);
+		Random r = new Random ();
+		System.out.println("avant " +this.getPoints().size() );
+		System.out.println(this.getPoints().size());
+		int i = r.nextInt(6); 
+		System.out.println( " i mutation "+i);
+		ConvexPolygon p; 
+		if ( i==0) {
+			//p=this.PointMutation();
+			p=this.CouleurMutation();
 		}
-		//assert p.getPoints().size()>=3;
-		//System.out.println("point après mut "+ p.getPoints().size());
-		return p;
+		else if ( i==1) {
+			p=this.CouleurMutation();
+		}
+		else if ( i==2) {
+			p=this.OpaciteMutation();
+		}
+		else if ( i==3) {
+			p=this.RotationMutation();
+			//p=this.OpaciteMutation();
+		}
+		else if (i==4) {
+			p=this.TranslationMutation();
+			//p=this.OpaciteMutation();
+		}
+		else {
+			p=new ConvexPolygon(Population.numPoint);
+		}
+		
+		System.out.println("apres " +this.getPoints().size() );
+		System.out.println(this.getPoints().size());
+		return p; 
 	}
-
+	
+	
 }

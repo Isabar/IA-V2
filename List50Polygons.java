@@ -18,36 +18,34 @@ public class List50Polygons {
 	ArrayList<ConvexPolygon> list;
 	double score;
 	
+	int generation;
 	
-	public List50Polygons() {
+	public List50Polygons(int generation ) {
 		super();
-		list=new ArrayList<ConvexPolygon>(50);
+		list=new ArrayList<ConvexPolygon>();
+		this.generation=generation;
 		}
 
-	public List50Polygons(int n) {// création de liste avec 50 polygons avec n nb de sommets max des polygones
-		list=new ArrayList<ConvexPolygon>(50);
-		for ( int i=0; i<Main.nbPolygons; i++) {
-			ConvexPolygon cp;
-				do {
-					cp= new ConvexPolygon(n);
-				}while ( cp.getPoints().size()<=0);
-				list.add(cp); // nb de sommet max des polygons 
-			} // nb de sommet max des polygons 
-		
+	public List50Polygons(int n, int generation) {// création de liste avec 50 polygons avec n nb de sommets max des polygones
+		list=new ArrayList<ConvexPolygon>();
+		this.generation=generation;
+		for ( int i=0; i<50; i++) {
+			list.add(new ConvexPolygon(n)); // nb de sommet max des polygons 
+		}
 		//System.out.println("création liste ");
-		score = this.score();
+		score = score(list);
 	}
 
 	
-	public double score(){
+	public static double score(List<ConvexPolygon> ls){
 		
+		//System.out.println("Read target image " + targetImage + " " + maxX + "x" + maxY);
 		Group image = new Group();
-		for (ConvexPolygon p : list)
+		for (ConvexPolygon p : ls)
 			image.getChildren().add(p);
 		
 		// Calcul de la couleur de chaque pixel.Pour cela, on passe par une instance de 
 		// WritableImage, qui possède une méthode pour obtenir un PixelReader.
-		
 		WritableImage wimg = new WritableImage(ConvexPolygon.max_X,ConvexPolygon.max_Y);
 		image.snapshot(null,wimg);
 		PixelReader pr = wimg.getPixelReader();
@@ -72,11 +70,11 @@ public class List50Polygons {
 		for(int i=0;i<list.size();i++) {
 			result=result+list.get(i).toString();
 		}
-	   return  result ;
+	   return  result + " " +generation;
 	}
 
 	public void setScore() {
-		this.score=this.score();
+		this.score = score(list);
 		//System.out.println("set score"+score);
 	}
 
